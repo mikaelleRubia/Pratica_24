@@ -26,6 +26,7 @@ class Dependente: public Usuario {
     string tipoRelacao;  
 
 public:
+    Dependente() : Usuario("", ""), tipoRelacao("") {}
     Dependente(string nome, string cpf, string tipoRelacao) : Usuario(nome, cpf), tipoRelacao(tipoRelacao) {}
 
     string getTipoRelacao() {return tipoRelacao;}
@@ -36,24 +37,24 @@ class Pacote;
 class Cliente: public Usuario{
     private:
         vector<Pacote> pacotes;
-        vector<Dependente> dependentes;
+        vector<Dependente*> dependentes;
         
-
     public:
+        Cliente() : Usuario("", "") {}
         Cliente(string _nome, string _cpf) : Usuario(_nome, _cpf){}
-        Cliente(string _nome, string _cpf, Dependente dependente) : Usuario(_nome, _cpf) {
-            dependentes.push_back(dependente);
-            
-        }
+
         const vector<Pacote>& getPacotes() const {
             return pacotes;
         }
-
-        const vector<Dependente>& getDependentes() const {
+        void setPacotes(const vector<Pacote>& pacote){
+            pacotes = pacote;
+        }
+        vector<Dependente*>& getDependentes() {
             return dependentes;
         }
-};
 
+
+};
 class Roteiro {
     private:
         string destino;
@@ -77,6 +78,7 @@ class Deslocamento {
     string origem;
 
     public:
+
     Deslocamento(string _meioTransporte, int _duracaoHoras, string _origem)
         : meioTransporte(_meioTransporte), duracaoHoras(_duracaoHoras), origem(_origem) {}
 
@@ -161,6 +163,8 @@ class Pacote{
 };
 
 int main(){
+
+
 
     return 0;
 }
