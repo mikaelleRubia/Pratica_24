@@ -10,17 +10,16 @@ class Usuario{
     private:
         string nome;
         string cpf;
-        int idade;
+
     public:
     Usuario();
-        Usuario(string nome, string cpf, int idade) {this->nome = nome;this->cpf =cpf;this->idade = idade;}
+        Usuario(string nome, string cpf) {this->nome = nome;this->cpf =cpf;}
+
         string getCpf(){ return cpf; }
         void setCpf(string cpf) { this->cpf =cpf; }
+
         string getNome(){ return nome; }
         void setNome(string nome) { this->nome = nome; }
-        int getIdade(){ return idade; }
-        void setIdade(int idade) { this->idade = idade; }
-    
 
 };
 
@@ -29,37 +28,34 @@ class Dependente: public Usuario {
     string tipoRelacao;  
 
 public:
-    Dependente(string nome, string cpf,int idade, string tipoRelacao) : Usuario(nome, cpf, idade), tipoRelacao(tipoRelacao) {}
+    Dependente(string nome, string cpf, string tipoRelacao) : Usuario(nome, cpf), tipoRelacao(tipoRelacao) {}
 
     string getTipoRelacao() {return tipoRelacao;}
     void setTipoRelacao(string tipoRelacao) {this->tipoRelacao = tipoRelacao;}
     
 };
-
+class Pacote;
 class Cliente: public Usuario{
     private:
-        vector<Dependente*> dependentes;
+        vector<Pacote> pacotes;
+        vector<Dependente> dependentes;
+        
 
     public:
-        Cliente(string _nome, string _cpf, int _idade) : Usuario(_nome, _cpf, _idade){}
-        Cliente(string _nome, string _cpf, int _idade, Dependente* dependente) : Usuario(_nome, _cpf, _idade) {
+        Cliente(string _nome, string _cpf) : Usuario(_nome, _cpf){}
+        Cliente(string _nome, string _cpf, Dependente dependente) : Usuario(_nome, _cpf) {
             dependentes.push_back(dependente);
+            
         }
 
-        void adicionarDependente(Dependente* dependente) {
+        void adicionarDependente(Dependente dependente) {
             dependentes.push_back(dependente);
         } 
 };
 
 ///  Composição é a estratégia para a relação então Evento e Roteiro, Deslocamento, Pernoite. Um evento é composto por  Roteiro, Deslocamento e Pernoite.
 /// Se o Evento for excluido os  Roteiro, Deslocamento e Pernoite tambem serão excluidos.
-class Evento{
-    private:
-        Roteiro* roteiro;
-        Deslocamento* deslocamento;
-        Pernoite* pernoite;
 
-};
 class Roteiro {
     private:
         string destino;
@@ -112,6 +108,13 @@ class Pernoite {
     int getNumeroNoites() const { return numeroNoites; }
     void setNumeroNoites(int _numeroNoites) {numeroNoites = _numeroNoites;}
 };
+class Evento{
+    private:
+        Roteiro roteiro;
+        Deslocamento deslocamento;
+        Pernoite pernoite;
+
+};
 
 class Pacote{
     private:
@@ -120,6 +123,8 @@ class Pacote{
         double preco;
         string descricao;
         Evento* evento;
+        vector<Cliente> clientes;
+
 
     public:
         Pacote(int _codigo, double _preco, const string& _descricao, Evento* _evento)
