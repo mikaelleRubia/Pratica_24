@@ -45,10 +45,13 @@ class Cliente: public Usuario{
             dependentes.push_back(dependente);
             
         }
+        const vector<Pacote>& getPacotes() const {
+            return pacotes;
+        }
 
-        void adicionarDependente(Dependente dependente) {
-            dependentes.push_back(dependente);
-        } 
+        const vector<Dependente>& getDependentes() const {
+            return dependentes;
+        }
 };
 
 class Roteiro {
@@ -61,7 +64,10 @@ class Roteiro {
             : destino(_destino), pontosTuristicos(_pontosTuristicos) {}
 
         string getDestino() const { return destino; }
+        void setDestino(const string& _destino) { destino = _destino; }
+
         vector<string> getPontosTuristicos() const { return pontosTuristicos; }
+        void setPontosTuristicos(const vector<string>& _pontosTuristicos) { pontosTuristicos = _pontosTuristicos; }
 };
 
 class Deslocamento {
@@ -109,6 +115,19 @@ class Evento{
         Deslocamento deslocamento;
         Pernoite pernoite;
 
+    public:
+        Evento(const Roteiro& _roteiro, const Deslocamento& _deslocamento, const Pernoite& _pernoite)
+            : roteiro(_roteiro), deslocamento(_deslocamento), pernoite(_pernoite) {}
+
+        const Roteiro& getRoteiro() const {return roteiro;}
+        void setRoteiro(const Roteiro& _roteiro) {roteiro = _roteiro;}
+
+        const Deslocamento& getDeslocamento() const {return deslocamento;}
+        void setDeslocamento(const Deslocamento& _deslocamento) {deslocamento = _deslocamento;}
+
+        const Pernoite& getPernoite() const {return pernoite; }
+        void setPernoite(const Pernoite& _pernoite) {pernoite = _pernoite;}
+
 };
 
 class Pacote{
@@ -117,13 +136,13 @@ class Pacote{
         int codigo;
         double preco;
         string descricao;
-        Evento* evento;
+        vector <Evento> eventos;
         vector<Cliente> clientes;
 
 
     public:
-        Pacote(int _codigo, double _preco, const string& _descricao, Evento* _evento)
-        : codigo(_codigo), preco(_preco), descricao(_descricao), evento(_evento) {}
+        Pacote(int _codigo, double _preco, const string& _descricao)
+        : codigo(_codigo), preco(_preco), descricao(_descricao) {}
 
         int getCodigo() const { return codigo; }
         void setCodigo(int _codigo) { codigo = _codigo; }
@@ -134,10 +153,11 @@ class Pacote{
         string getDescricao() const { return descricao; }
         void setDescricao(string _descricao) { descricao = _descricao; }
 
-        Evento* getEvento() const { return evento; }
-        void setEvento(Evento* _evento) { evento = _evento; }
+        const vector<Evento>& getEventos() const { return eventos; }
+        void setEventos(const vector<Evento>& _eventos) { eventos = _eventos; }      
 
-
+        const vector<Cliente>& getClientes() const { return clientes; }
+        void setClientes(const vector<Cliente>& _clientes) { clientes = _clientes; }   
 };
 
 int main(){
