@@ -3,8 +3,6 @@
 
 using namespace std;
 
-/// Agregação é a estratégia adequada para a relação entre cliente e dependente. Um dependente é uma entidade a uma cliente.
-
 
 class Usuario{
     private:
@@ -52,9 +50,6 @@ class Cliente: public Usuario{
             dependentes.push_back(dependente);
         } 
 };
-
-///  Composição é a estratégia para a relação então Evento e Roteiro, Deslocamento, Pernoite. Um evento é composto por  Roteiro, Deslocamento e Pernoite.
-/// Se o Evento for excluido os  Roteiro, Deslocamento e Pernoite tambem serão excluidos.
 
 class Roteiro {
     private:
