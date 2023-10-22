@@ -160,7 +160,62 @@ class Pacote{
         void setClientes(const vector<Cliente>& _clientes) { clientes = _clientes; }   
 };
 
+void listarClientes(vector<Cliente>&);
+void listarPacotes(vector<Pacote>&);
+
 int main(){
 
     return 0;
+}
+
+void listarClientes(vector<Cliente> &clientes){
+    cout<<"### LISTA DE CLIENTES ###"<<endl;
+    for(Cliente &cliente : clientes){
+        cout<<"--------------------------"<<endl;
+        cout<<cliente.getNome()<<endl;
+        cout<<"CPF: "<<cliente.getCpf()<<endl;
+        if(cliente.getDependentes().size() == 0) cout<<"Cliente sem dependentes."<<endl;
+        else{
+            cout<<"Dependentes de "<<cliente.getNome()<<':'<<endl;
+            for(Dependente dependente : cliente.getDependentes()){
+                cout<<"--------------------------"<<endl;
+                cout<<dependente.getNome()<<endl;
+                cout<<"CPF: "<<dependente.getCpf()<<endl;
+                cout<<"Relacao: "<<dependente.getTipoRelacao()<<endl;
+            }
+        }
+    }
+    cout<<"--------------------------"<<endl;
+}
+
+void listarPacotes(vector<Pacote> &pacotes){
+    cout<<"### LISTA DE PACOTES ###"<<endl;
+    for(Pacote pacote : pacotes){
+        cout<<"--------------------------"<<endl;
+        cout<<"Codigo: "<<pacote.getCodigo()<<endl;
+        cout<<"Descricao: "<<pacote.getDescricao()<<endl;
+        cout<<"Valor: "<<pacote.getPreco()<<endl;
+        cout<<"Eventos cadastrados: "<<endl;
+        for(Evento evento : pacote.getEventos()){
+            cout<<"\nRoteiro: "<<endl;
+            cout<<"Destino: "<<evento.getRoteiro().getDestino()<<endl;
+            cout<<"Pontos turisticos: "<<endl;
+            for(string ponto : evento.getRoteiro().getPontosTuristicos()){
+                cout<<ponto<<endl;
+            }
+
+            cout<<"\nDeslocamento:"<<endl;
+            cout<<"Transporte via "<<evento.getDeslocamento().getMeioTransporte()<<endl;
+            cout<<"Duracao: "<<evento.getDeslocamento().getDuracaoHoras()<<endl;
+            cout<<"Origem: "<<evento.getDeslocamento().getOrigem()<<endl;
+
+            cout<<"\nPernoite:"<<endl;
+            cout<<"Hotel: "<<evento.getPernoite().getHotel()<<endl;
+            cout<<"Localizacao: "<<evento.getPernoite().getEndereco()<<endl;
+            cout<<"Quantidade de noites: "<<evento.getPernoite().getNumeroNoites()<<endl;
+        }
+    }
+
+    cout<<"--------------------------"<<endl;
+
 }
