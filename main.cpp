@@ -10,7 +10,7 @@ class Usuario{
         string cpf;
 
     public:
-    Usuario();
+        Usuario();
         Usuario(string nome, string cpf) {this->nome = nome;this->cpf =cpf;}
 
         string getCpf(){ return cpf; }
@@ -36,23 +36,33 @@ public:
 class Pacote;
 class Cliente: public Usuario{
     private:
-        vector<Pacote> pacotes;
+        vector<Pacote*> pacotes;
         vector<Dependente*> dependentes;
         
     public:
         Cliente() : Usuario("", "") {}
         Cliente(string _nome, string _cpf) : Usuario(_nome, _cpf){}
 
-        const vector<Pacote>& getPacotes() const {
-            return pacotes;
-        }
-        void setPacotes(const vector<Pacote>& pacote){
+        vector<Pacote*>& getPacotes(){return pacotes;}
+
+        void setPacotes(const vector<Pacote*>& pacote){
             pacotes = pacote;
         }
-        vector<Dependente*>& getDependentes() {
-            return dependentes;
+        
+        int NumeroDependentes() const {
+            return dependentes.size();
+        }
+        void addDependente(Dependente* dependente) {
+            dependentes.push_back(dependente);
         }
 
+        vector<Dependente*>& getDependentes() {return dependentes;}
+
+        void venderPacoteCliente(Pacote* pacote);
+        static void imprimirPacoteCliente(Cliente* cliente);
+        static void add_client_dependente(vector <Cliente> &clientes);
+        static void imprimirClientes(vector<Cliente>& clientes);
+            
 
 };
 class Roteiro {
@@ -138,8 +148,8 @@ class Pacote{
         int codigo;
         double preco;
         string descricao;
-        vector <Evento> eventos;
-        vector<Cliente> clientes;
+        vector <Evento>* eventos;
+        vector<Cliente*> clientes; 
 
 
     public:
@@ -155,16 +165,133 @@ class Pacote{
         string getDescricao() const { return descricao; }
         void setDescricao(string _descricao) { descricao = _descricao; }
 
-        const vector<Evento>& getEventos() const { return eventos; }
-        void setEventos(const vector<Evento>& _eventos) { eventos = _eventos; }      
+        const vector<Evento>* getEventos() const { return eventos; }
+        void setEventos(vector<Evento>* _eventos) { eventos = _eventos; }        
 
-        const vector<Cliente>& getClientes() const { return clientes; }
-        void setClientes(const vector<Cliente>& _clientes) { clientes = _clientes; }   
+        vector<Cliente*>* getClientes() { return &clientes; }
+
+        void adicionarCliente(Cliente* cliente) {
+            clientes.push_back(cliente);
+        }
 };
 
 int main(){
+    char resposta;
+    vector<Cliente> clientes;
+    vector<Pacote> pacotes;
+    do{
+
+        Cliente::add_client_dependente(clientes);
+        cout << "Deseja adicionar outro cliente e seus dependentes? " << endl;
+        cin >> resposta;
+    }while(resposta == 's' || resposta == 'S');
+
+    Cliente cliente("Nome do Cliente", "123456789");
+    Pacote p(123, 1200.00, "praia");
+    Pacote p1(333, 1500.00, "teatro");
 
 
+    // Dependente dependente("Nome Dependente", "987654321", "Filho");
+    // cliente.addDependente(&dependente);
+
+
+    clientes[0].venderPacoteCliente(&p);
+    clientes[0].venderPacoteCliente(&p1);
+    cliente.venderPacoteCliente(&p);
+    cliente.venderPacoteCliente(&p1);
+
+    clientes.push_back(cliente);
+    pacotes.push_back(p);
+    pacotes.push_back(p1);
+
+
+    Cliente::imprimirClientes(clientes);
+    Cliente::imprimirPacoteCliente(&clientes[0]);
 
     return 0;
 }
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////CLASSE CLIENTE E METODOS///////////////////////
+/////////////////////////////////////////////////////////////////////
+
+void Cliente::add_client_dependente(vector <Cliente> &clientes){
+    string nome, cpf;
+    cout << "Digite o nome do cliente: ";
+    cin.ignore();
+    getline(cin, nome);
+    cout << "Digite o CPF do cliente: ";
+    cin >> cpf;
+
+    Cliente cliente(nome, cpf);
+    
+    int numDependentes;
+    cout << "Digite o numero de dependentes: ";
+    cin >> numDependentes;
+
+    for (int i = 0; i < numDependentes; ++i) {
+        cout << "-----------------------------"<< endl;
+
+        string nomeDependente, cpfDependente, tipoRelacao;
+        cout << "Digite o nome do dependente " << i+1 << ": ";
+        cin.ignore();
+        getline(cin, nomeDependente);
+        cout << "Digite o CPF do dependente " << i+1 << ": ";
+        cin >> cpfDependente;
+        cout << "Digite o tipo de relacao do dependente " << i+1 << ": ";
+        cin >> tipoRelacao;
+
+        Dependente* dependente = new Dependente(nomeDependente, cpfDependente, tipoRelacao);
+        cliente.addDependente(dependente);
+    }
+    clientes.push_back(cliente);
+}
+
+
+void Cliente::imprimirClientes(vector<Cliente>& clientes) {
+    cout << "-------LISTA CLIENTES---------"<< endl;
+
+    for (Cliente cliente : clientes) {
+        cout << "Nome do Cliente: " << cliente.getNome() << endl;
+        cout << "CPF do Cliente: " << cliente.getCpf() << endl;
+
+        const vector<Dependente*>& dependentes = cliente.getDependentes();
+        if (dependentes.size() > 0) {
+            cout << "Dependentes:" << endl;
+            for ( Dependente* dependente : dependentes) {
+                cout << "   Nome: " << dependente->getNome() << endl;
+                cout << "   CPF: " << dependente->getCpf() << endl;
+                cout << "   Tipo de Relacao: " << dependente->getTipoRelacao() << endl;
+                cout << "------------" << endl;
+            }
+        } else {
+            cout << "O cliente nao possui dependentes." << endl;
+        }
+        cout << "---------------------------" << endl;
+    }
+}
+
+void Cliente::imprimirPacoteCliente(Cliente* cliente){
+    cout << "-------LISTA CLIENTES E SEUS PACOTES---------"<< endl;
+
+    cout << "Nome do Cliente: " << cliente->getNome() << endl;
+    cout << "CPF do Cliente: " << cliente->getCpf() << endl;
+
+    const vector<Pacote*>& pacotes = cliente->getPacotes();
+    if (pacotes.size() > 0) {
+        for ( Pacote* p: pacotes) {
+        cout << "   Nome: " << p->getCodigo() << endl;
+        cout << "   CPF: " << p->getDescricao() << endl;
+        cout << "------------" << endl;
+        }
+    }
+}
+
+void Cliente::venderPacoteCliente(Pacote* pacote) {
+    pacotes.push_back(pacote);
+    pacote->adicionarCliente(this);
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////FINAL DA CLASSE CLIENTE E METODOS//////////////////
+/////////////////////////////////////////////////////////////////////
