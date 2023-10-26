@@ -175,6 +175,8 @@ class Pacote{
         }
 };
 
+void listarPacotes(vector<Pacote>&);
+
 int main(){
     char resposta;
     vector<Cliente> clientes;
@@ -190,7 +192,22 @@ int main(){
     Pacote p(123, 1200.00, "praia");
     Pacote p1(333, 1500.00, "teatro");
 
+    const vector<string> pontos = {"ponto1", "ponto2"};
+    Roteiro r1 = Roteiro("Salvador", pontos);
+    Roteiro r2 = Roteiro("Belo Horizonte", pontos);
+    Deslocamento d1 = Deslocamento("Aviao", 3, "Ilheus");
+    Pernoite pe1 = Pernoite("Hotel 1", "endereco 1", 1);
+    Evento e1 = Evento(r1, d1, pe1);
+    Evento e2 = Evento(r2, d1, pe1);
 
+    vector<Evento>* ev1 = new vector<Evento>();
+    ev1->push_back(e1);
+    vector<Evento>* ev2 = new vector<Evento>();
+    ev2->push_back(e1);
+    ev2->push_back(e2);
+    p.setEventos(ev1);
+    p1.setEventos(ev1);
+    p1.setEventos(ev2);
     // Dependente dependente("Nome Dependente", "987654321", "Filho");
     // cliente.addDependente(&dependente);
 
@@ -207,6 +224,8 @@ int main(){
 
     Cliente::imprimirClientes(clientes);
     Cliente::imprimirPacoteCliente(&clientes[0]);
+
+    listarPacotes(pacotes);
 
     return 0;
 }
@@ -295,3 +314,36 @@ void Cliente::venderPacoteCliente(Pacote* pacote) {
 //////////////////////////////////////////////////////////////////////
 ///////////////////FINAL DA CLASSE CLIENTE E METODOS//////////////////
 /////////////////////////////////////////////////////////////////////
+
+void listarPacotes(vector<Pacote> &pacotes){
+    cout<<"### LISTA DE PACOTES ###"<<endl;
+    for(Pacote pacote : pacotes){
+        cout<<"--------------------------"<<endl;
+        cout<<"Codigo: "<<pacote.getCodigo()<<endl;
+        cout<<"Descricao: "<<pacote.getDescricao()<<endl;
+        cout<<"Valor: "<<pacote.getPreco()<<endl;
+        cout<<"Eventos cadastrados: "<<endl;
+        const vector<Evento>* eventos = pacote.getEventos();
+        for(auto i = 0; i < eventos->size(); i++){
+            cout<<"\nRoteiro: "<<endl;
+            cout<<"Destino: "<<pacote.getEventos()->at(i).getRoteiro().getDestino()<<endl;
+            cout<<"Pontos turisticos: "<<endl;
+            for(string ponto : pacote.getEventos()->at(i).getRoteiro().getPontosTuristicos()){
+                cout<<ponto<<endl;
+            }
+
+            cout<<"\nDeslocamento:"<<endl;
+            cout<<"Transporte via "<<pacote.getEventos()->at(i).getDeslocamento().getMeioTransporte()<<endl;
+            cout<<"Duracao: "<<pacote.getEventos()->at(i).getDeslocamento().getDuracaoHoras()<<endl;
+            cout<<"Origem: "<<pacote.getEventos()->at(i).getDeslocamento().getOrigem()<<endl;
+
+            cout<<"\nPernoite:"<<endl;
+            cout<<"Hotel: "<<pacote.getEventos()->at(i).getPernoite().getHotel()<<endl;
+            cout<<"Localizacao: "<<pacote.getEventos()->at(i).getPernoite().getEndereco()<<endl;
+            cout<<"Quantidade de noites: "<<pacote.getEventos()->at(i).getPernoite().getNumeroNoites()<<endl;
+        }
+    }
+
+    cout<<"--------------------------"<<endl;
+
+}
