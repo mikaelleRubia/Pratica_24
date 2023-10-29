@@ -140,6 +140,8 @@ class Evento{
         const Pernoite& getPernoite() const {return pernoite; }
         void setPernoite(const Pernoite& _pernoite) {pernoite = _pernoite;}
 
+        static void criarEventos( vector<Evento>& eventos);
+
 };
 
 class Pacote{
@@ -166,13 +168,16 @@ class Pacote{
         void setDescricao(string _descricao) { descricao = _descricao; }
 
         const vector<Evento>* getEventos() const { return eventos; }
-        void setEventos(vector<Evento>* _eventos) { eventos = _eventos; }        
+        void adicionarEvento(Evento* evento);
+        void setEventos(vector<Evento>* _eventos) { eventos = _eventos; }  
+        static void criarPacotes( vector<Pacote>& pacotes, vector<Evento>& eventos);      
 
         vector<Cliente*>* getClientes() { return &clientes; }
 
         void adicionarCliente(Cliente* cliente) {
             clientes.push_back(cliente);
         }
+        
 };
 
 void listarPacotes(vector<Pacote>&);
@@ -181,6 +186,7 @@ int main(){
     char resposta;
     vector<Cliente> clientes;
     vector<Pacote> pacotes;
+    vector<Evento> eventos;
     do{
 
         Cliente::add_client_dependente(clientes);
@@ -192,22 +198,26 @@ int main(){
     Pacote p(123, 1200.00, "praia");
     Pacote p1(333, 1500.00, "teatro");
 
-    const vector<string> pontos = {"ponto1", "ponto2"};
-    Roteiro r1 = Roteiro("Salvador", pontos);
-    Roteiro r2 = Roteiro("Belo Horizonte", pontos);
-    Deslocamento d1 = Deslocamento("Aviao", 3, "Ilheus");
-    Pernoite pe1 = Pernoite("Hotel 1", "endereco 1", 1);
-    Evento e1 = Evento(r1, d1, pe1);
-    Evento e2 = Evento(r2, d1, pe1);
+    do {
+        Evento::criarEventos(eventos); // Chama o método criarEventos
+        cout << "Deseja cadastrar outro evento? (s/n): ";
+        cin >> resposta;
+    } while (resposta == 's' || resposta == 'S');
 
-    vector<Evento>* ev1 = new vector<Evento>();
-    ev1->push_back(e1);
-    vector<Evento>* ev2 = new vector<Evento>();
-    ev2->push_back(e1);
-    ev2->push_back(e2);
-    p.setEventos(ev1);
-    p1.setEventos(ev1);
-    p1.setEventos(ev2);
+
+    do {
+        Pacote::criarPacotes(pacotes, eventos);
+        cout << "Deseja criar outro pacote? (s/n): ";
+        cin >> resposta;
+    } while (resposta == 's' || resposta == 'S');
+    // vector<Evento>* ev1 = new vector<Evento>();
+    // ev1->push_back(e1);
+    // vector<Evento>* ev2 = new vector<Evento>();
+    // ev2->push_back(e1);
+    // ev2->push_back(e2);
+    // p.setEventos(ev1);
+    // p1.setEventos(ev1);
+    // p1.setEventos(ev2);
     // Dependente dependente("Nome Dependente", "987654321", "Filho");
     // cliente.addDependente(&dependente);
 
@@ -347,3 +357,110 @@ void listarPacotes(vector<Pacote> &pacotes){
     cout<<"--------------------------"<<endl;
 
 }
+void Pacote::adicionarEvento(Evento* evento) {
+   if (eventos == nullptr) {
+        eventos = new vector<Evento>;
+    }
+    eventos->push_back(*evento); 
+}
+void Pacote::criarPacotes(vector<Pacote>& pacotes, vector<Evento>& eventos) {
+    int codigo;
+    double preco;
+    string descricao;
+
+    cout << "Criar Pacote" << endl;
+
+    cout << "Digite o código do pacote: ";
+    cin >> codigo;
+    cout << "Digite o preço do pacote: ";
+    cin >> preco;
+
+    cin.ignore();  // Limpar o buffer de entrada
+    cout << "Digite a descrição do pacote: ";
+    getline(cin, descricao);
+
+    Pacote pacote(codigo, preco, descricao);
+
+    // Listar os eventos disponíveis
+    cout << "Eventos disponíveis:" << endl;
+    for (size_t i = 0; i < eventos.size(); i++) {
+        cout << i + 1 << " eventos "  << endl;
+    }
+
+    // Solicitar ao usuário a escolha de eventos para adicionar ao pacote
+    int numEventos;
+    cout << "Quantos eventos deseja adicionar a este pacote? ";
+    cin >> numEventos;
+
+    for (int i = 0; i < numEventos; i++) {
+        cout << "Escolha o evento pelo índice: ";
+        int escolhaEvento;
+        cin >> escolhaEvento;
+        if (escolhaEvento >= 1 && escolhaEvento <= eventos.size()) {
+            // Adicionar o evento escolhido ao pacote
+            pacote.adicionarEvento(&eventos[escolhaEvento - 1]);
+        } else {
+            cout << "Escolha de evento inválida. Certifique-se de que o índice seja válido." << endl;
+        }
+    }
+
+    // Adicionar o pacote criado à lista de pacotes
+    pacotes.push_back(pacote);
+
+    cout << "Pacote criado com sucesso!" << endl;
+}
+
+//void Cliente::add_client_dependente(vector <Cliente> &clientes){
+
+void Evento::criarEventos(vector<Evento>& eventos) {
+    string destino;
+    vector<string> pontosTuristicos;
+    string meioTransporte;
+    int duracaoHoras;
+    string origem;
+    string hotel;
+    string endereco;
+    int numeroNoites;
+
+    cout << "Cadastrar Evento" << endl;
+
+    cout << "Digite o destino do roteiro: ";
+    cin.ignore();
+    getline(cin, destino);
+
+    int numPontosTuristicos;
+    cout << "Quantos pontos turísticos deseja cadastrar? ";
+    cin >> numPontosTuristicos;
+    cin.ignore(); // Limpar o caractere de nova linha deixado no buffer de entrada
+    for (int i = 0; i < numPontosTuristicos; i++) {
+        string ponto;
+        cout << "Digite o ponto turístico " << i + 1 << ": ";
+        getline(cin, ponto);
+        pontosTuristicos.push_back(ponto);
+    }
+
+    cout << "Digite o meio de transporte: ";
+    getline(cin, meioTransporte);
+    cout << "Digite a duração em horas: ";
+    cin >> duracaoHoras;
+    cin.ignore(); // Limpar o caractere de nova linha deixado no buffer de entrada
+    cout << "Digite a origem do deslocamento: ";
+    getline(cin, origem);
+    cout << "Digite o nome do hotel: ";
+    getline(cin, hotel);
+    cout << "Digite o endereço do hotel: ";
+    getline(cin, endereco);
+    cout << "Digite o número de noites: ";
+    cin >> numeroNoites;
+
+    Roteiro roteiro(destino, pontosTuristicos);
+    Deslocamento deslocamento(meioTransporte, duracaoHoras, origem);
+    Pernoite pernoite(hotel, endereco, numeroNoites);
+    Evento evento(roteiro, deslocamento, pernoite);
+
+    eventos.push_back(evento);
+
+    cout << "Evento cadastrado com sucesso!" << endl;
+}
+
+
